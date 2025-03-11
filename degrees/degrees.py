@@ -91,23 +91,46 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    action = None
-    base = Node(source, None, action)
+    base = Node(source, None, None)
 
     frontier = QueueFrontier()
     frontier.add(base)
 
-def bfs(frontier: QueueFrontier, target: str):
-    if frontier.contains_state(target):
-        for node in frontier.frontier:
-            if node.state == target:
-                return node
-    else:
-        node = frontier.remove()
-        for neighbor in neighbors_for_person(node):
-            frontier.add(neighbor)
+    return bfs(frontier, target, [])
+
+def bfs(frontier: QueueFrontier, target: str, visited: list):
+    # pop from queue
+    node = frontier.remove()
+
+    # increment visited
+    visited.append(node.state)
     
-    return bfs(frontier, target)
+    # check target
+    if node.state == target:
+        return get_path_to_node(node)
+
+    # add children to queue
+    for movie, person in neighbors_for_person(node.state):
+        if person not in visited:
+            new_node = Node(person, node, movie)
+            frontier.add(new_node)
+
+    if frontier.empty():
+        return None
+    
+    return bfs(frontier, target, visited)
+
+
+def get_path_to_node(node: Node):
+    path = []
+
+    while node.parent != None:
+        # track movie, person to get to the target
+        path.append((node.action, node.state))
+        node = node.parent
+    
+    path.reverse()
+    return path
 
 
 def person_id_for_name(name):
