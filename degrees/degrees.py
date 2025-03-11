@@ -104,15 +104,16 @@ def bfs(frontier: QueueFrontier, target: str, visited: list):
 
     # increment visited
     visited.append(node.state)
-    
-    # check target
-    if node.state == target:
-        return get_path_to_node(node)
 
     # add children to queue
     for movie, person in neighbors_for_person(node.state):
         if person not in visited:
             new_node = Node(person, node, movie)
+
+            # check children for target before adding it
+            if person == target:
+                return get_path_to_node(new_node)
+
             frontier.add(new_node)
 
     if frontier.empty():
