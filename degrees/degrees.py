@@ -91,6 +91,9 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    if source == target:
+        return []
+
     base = Node(source, None, None)
 
     frontier = QueueFrontier()
